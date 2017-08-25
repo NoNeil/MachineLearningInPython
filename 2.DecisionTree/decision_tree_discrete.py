@@ -43,7 +43,7 @@ def partition(x_i):
 
 
 def info_gain(x_i, y, type='entropy'):
-    # I(y,x)=H(y)−[px=0 H(y|x=0)+px=1 H(y|x=1))]
+    # I(y,x) = H(y) − [px=0 H(y|x=0)+px=1 H(y|x=1))]
     if type == 'entropy':
         res = entropy(y)
     elif type == 'gini':
