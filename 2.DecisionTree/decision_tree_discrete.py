@@ -1,12 +1,17 @@
-print ("Decision Tree in Python.")
-
 # refer: http://gabrielelanaro.github.io/blog/2016/03/03/decision-trees.html
 
 import numpy as np
 from pprint import pprint
 
+print("Decision Tree in Python.")
+
+
 def create_data():
-    return np.array([[0,0,0],[0,1,0],[1,0,0],[1,1,0],[2,1,1],[2,0,0]])
+    return np.array([[0, 0, 0],
+                     [0, 1, 0],
+                     [1, 0, 0],
+                     [1, 1, 0], [2, 1, 1], [2, 0, 0]])
+
 
 def entropy(y):
     # H = sum(-p * log2(p))
@@ -18,6 +23,7 @@ def entropy(y):
             res -= p * np.log2(p)
     return res
 
+
 def gini(y):
     res = 1.0
     unique, counts = np.unique(y, return_counts=True)
@@ -26,10 +32,12 @@ def gini(y):
         res -= p * p
     return res
 
+
 def partition(x_i):
     return {val: (x_i == val).nonzero()[0] for val in np.unique(x_i)}
 
-def info_gain(x_i, y, type = 'entropy'):
+
+def info_gain(x_i, y, type='entropy'):
     # I(y,x)=H(y)−[px=0 H(y|x=0)+px=1 H(y|x=1))]
     if type == 'entropy':
         res = entropy(y)
@@ -45,12 +53,15 @@ def info_gain(x_i, y, type = 'entropy'):
             res -= p * gini(y[x_i == val])
     return res
 
+
 def is_pure(y):
     return len(set(y)) == 1
 
-def recursive_split(x, y, type = 'entropy'):
+
+def recursive_split(x, y, type='entropy'):
     # if all labels is the same in the sub data set , return
-    if is_pure(y) or len(y) == 0: return y
+    if is_pure(y) or len(y) == 0:
+        return y
 
     # calculate information gain of each x attribute
     gains = np.array([info_gain(x_i, y, type) for x_i in x.T])
@@ -59,7 +70,8 @@ def recursive_split(x, y, type = 'entropy'):
     selected_attr = np.argmax(gains)
 
     # if information gains are too small
-    if np.all(gains < 1e-5):    return y
+    if np.all(gains < 1e-5):
+        return y
 
     # split the data set using selected attribute
     split_sets = partition(x[:, selected_attr])
@@ -85,8 +97,8 @@ print('Tst for info_gian:', info_gain(np.array([2, 2, 2]), np.array([0, 0, 1])))
 data_sub = partition(data[:, 0])
 print('Test for partition:', partition([0, 1, 1, 2]))
 
-print ("\nDecision Tree Structure(entropy):")
-pprint (recursive_split(x, y))
+print("\nDecision Tree Structure(entropy):")
+pprint(recursive_split(x, y))
 
-print ("\nDecision Tree Structure(gini):")
-pprint (recursive_split(x, y, 'gini'))
+print("\nDecision Tree Structure(gini):")
+pprint(recursive_split(x, y, 'gini'))
