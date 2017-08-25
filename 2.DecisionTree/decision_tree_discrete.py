@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# coding=utf-8
+
 # refer: http://gabrielelanaro.github.io/blog/2016/03/03/decision-trees.html
 
 import numpy as np
@@ -10,7 +13,9 @@ def create_data():
     return np.array([[0, 0, 0],
                      [0, 1, 0],
                      [1, 0, 0],
-                     [1, 1, 0], [2, 1, 1], [2, 0, 0]])
+                     [1, 1, 0],
+                     [2, 1, 1],
+                     [2, 0, 0]])
 
 
 def entropy(y):
@@ -91,8 +96,10 @@ y = data[:, -1]
 print('Test for entropy:', entropy([1, 2]))
 print('Test for entropy:', entropy([1, 1]))
 
-print('Tst for info_gian:', info_gain(np.array([3, 3, 4]), np.array([0, 0, 1])))
-print('Tst for info_gian:', info_gain(np.array([2, 2, 2]), np.array([0, 0, 1])))
+print('Test for info_gian:', info_gain(np.array([3, 3, 4]),
+                                       np.array([0, 0, 1])))
+print('Test for info_gian:', info_gain(np.array([2, 2, 2]),
+                                       np.array([0, 0, 1])))
 
 data_sub = partition(data[:, 0])
 print('Test for partition:', partition([0, 1, 1, 2]))
