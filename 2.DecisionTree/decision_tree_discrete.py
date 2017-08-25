@@ -64,7 +64,7 @@ def is_pure(y):
 
 
 def recursive_split(x, y, type='entropy'):
-    # if all labels is the same in the sub data set , return
+    # if all labels is the same in the sub data set, return
     if is_pure(y) or len(y) == 0:
         return y
 
