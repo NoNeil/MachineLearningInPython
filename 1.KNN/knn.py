@@ -12,6 +12,7 @@ import operator
 
 # load data set
 def load_data():
+    # data website: https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data
     '''
     data samples with shape of (150, 5):
     sepal_length  sepal_width  petal_length  petal_width        class
@@ -29,7 +30,6 @@ def load_data():
 
     # convert category to number
     df['class'] = df['class'].astype('category').cat.codes
-    print(df.head())
 
     # split features and labels
     X = df.values[:, 1:4]
@@ -76,4 +76,4 @@ print('Size of X_test:', X_test.shape)
 y_predict = knn(X_train, y_train, X_test, 7)
 
 # accuracy rate
-print('accuracy rate:', np.sum(np.array(y_predict) == np.array(y_test)).astype('float') / y_test.shape[0])
+print('Accuracy rate:', np.sum(y_predict == y_test).astype('float') / y_test.shape[0])
