@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding=utf-8
+# coding: utf-8
 
 # refer: http://gabrielelanaro.github.io/blog/2016/03/03/decision-trees.html
 
@@ -44,12 +44,11 @@ def partition(x_i):
 
 def info_gain(x_i, y, type='entropy'):
     # I(y,x) = H(y) − [px=0 H(y|x=0)+px=1 H(y|x=1))]
-    if type == 'entropy':
-        res = entropy(y)
-    elif type == 'gini':
-        res = gini(y)
+    d = {'entropy': entropy(y), 'gini': gini(y)}
+    res = d.get(type, 0)
+
     values, counts = np.unique(x_i, return_counts=True)
-    freqs = counts.astype('float') / len(x_i)
+    freqs = counts.astype('float') / len(x_i)  # calc p
     if type == 'entropy':
         for val, p in zip(values, freqs):
             res -= p * entropy(y[x_i == val])
