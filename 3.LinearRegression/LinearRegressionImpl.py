@@ -12,11 +12,11 @@ import matplotlib.pyplot as plt
 
 
 def show_result(X, y, lr):
-    print("Result:")
     X1 = np.linspace(0, 8, 1000)
     features = np.ones((X1.shape[0], 2))
     features[:, 0] = X1
     y1 = lr.hypothesise(features)
+    plt.title("Draw line.")
     plt.interactive(False)
     plt.plot(X, y, 'bo')
     plt.plot(X1, y1, 'r-')
@@ -25,8 +25,9 @@ def show_result(X, y, lr):
 
 
 def show_loss_history(loss_history):
-    print("History of the Cost:")
     num_iters = len(loss_history)
+    plt.title("History of the Cost")
+    plt.interactive(False)
     plt.plot(np.linspace(1, num_iters, num_iters), loss_history, 'b-')
     plt.axis([-20, num_iters, 0, np.max(loss_history)])
     plt.show(block=True)
@@ -42,7 +43,6 @@ y = data[:, -1]
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.batch_gradient_decent(0.05, 1e5)
 print('theta of BGD: ', lr.theta.T)
-
 # show_result(X, y, lr)
 # show_loss_history(lr.loss_history)
 
@@ -51,7 +51,6 @@ print('theta of BGD: ', lr.theta.T)
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.stochastic_gradient_descent(0.03, 1e3)
 print('theta of SGB: ', lr.theta.T)
-
 # show_result(X, y, lr)
 # show_loss_history(lr.loss_history)
 
@@ -59,8 +58,14 @@ print('theta of SGB: ', lr.theta.T)
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.newton_general()
 print('theta of newton_general: ', lr.theta.T)
+show_result(X, y, lr)
+show_loss_history(lr.loss_history)
+print('num of iterations: ', len(lr.loss_history))
 
 # invoke newton method
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.newton_armijo()
 print('theta of newton_armijo: ', lr.theta.T)
+show_result(X, y, lr)
+show_loss_history(lr.loss_history)
+print('num of iterations: ', len(lr.loss_history))

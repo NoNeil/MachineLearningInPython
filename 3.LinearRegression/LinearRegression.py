@@ -39,7 +39,7 @@ class LinearRegression:
         self.features[:, :self.n_features] = X
 
         self.loss_history = []
-        print("initialize")
+        pass
 
     # y = w * x
     def hypothesise(self, features):
@@ -102,6 +102,9 @@ class LinearRegression:
             d = np.dot(np.linalg.inv(G), -g)
             self.theta += alpha * d
             loss = self.loss_function()
+            if len(self.loss_history) > 0 and np.abs(
+                    self.loss_history[-1] - loss) < self.tolerance:
+                break
             self.loss_history.append(loss)
         pass
 
@@ -115,7 +118,7 @@ class LinearRegression:
         return np.dot(self.features.T, self.features)
 
     # Armijo based newton method
-    def newton_armijo(self, max_iter=1e2, sigma=1.1, alpha=1e-1):
+    def newton_armijo(self, max_iter=1e2, sigma=0.5, alpha=0.1):
         for i in range(int(max_iter)):
             g = self.first_derivative()
             if np.linalg.norm(g) < self.tolerance:
@@ -124,6 +127,12 @@ class LinearRegression:
             d = np.dot(np.linalg.inv(G), -g)
             m = self.get_min_m(sigma, alpha, g, d)
             self.theta += pow(sigma, m) * d
+
+            loss = self.loss_function()
+            if len(self.loss_history) > 0 and np.abs(
+                    self.loss_history[-1] - loss) < self.tolerance:
+                break
+            self.loss_history.append(loss)
         pass
 
     # get min m with Armijo Search method
@@ -132,12 +141,11 @@ class LinearRegression:
         while True:
             theta_new = self.theta + pow(sigma, m) * d
             left = self.loss_function_2(theta_new)
-            print('g*d:', np.dot(g.T, d))
-            right = self.loss_function_2(self.theta) + alpha * pow(sigma, m) * np.dot(g.T, d)
+            right = self.loss_function_2(self.theta) + np.asscalar(alpha * pow(sigma, m) * np.dot(g.T, d))
             if left <= right:
                 break
             m += 1
-        pass
+        return m
 
     # loss_function with parameter of theta
     def loss_function_2(self, theta):
