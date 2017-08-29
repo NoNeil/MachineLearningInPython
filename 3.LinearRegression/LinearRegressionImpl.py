@@ -43,8 +43,8 @@ lr = LinearRegression(X, y, tolerance=1e-4)
 lr.batch_gradient_decent(0.05, 1e5)
 print('theta of BGD: ', lr.theta.T)
 
-show_result(X, y, lr)
-show_loss_history(lr.loss_history)
+# show_result(X, y, lr)
+# show_loss_history(lr.loss_history)
 
 
 # invoke stochastic gradient decent
@@ -52,5 +52,15 @@ lr = LinearRegression(X, y, tolerance=1e-4)
 lr.stochastic_gradient_descent(0.03, 1e3)
 print('theta of SGB: ', lr.theta.T)
 
-show_result(X, y, lr)
-show_loss_history(lr.loss_history)
+# show_result(X, y, lr)
+# show_loss_history(lr.loss_history)
+
+# invoke newton method
+lr = LinearRegression(X, y, tolerance=1e-4)
+lr.newton_general()
+print('theta of newton_general: ', lr.theta.T)
+
+# invoke newton method
+lr = LinearRegression(X, y, tolerance=1e-4)
+lr.newton_armijo()
+print('theta of newton_armijo: ', lr.theta.T)

@@ -53,8 +53,9 @@ class LinearRegression:
 
     # loss = (1 / 2) * (y' - y)^2
     def loss_function(self):
-        return (0.5 / self.n_samples) * \
-            np.sum(np.power(self.hypothesise(self.features) - self.labels, 2))
+        y_hat = self.hypothesise(self.features)
+        return (0.5 / self.n_samples) * np.asscalar(np.dot((self.labels - y_hat).T, (self.labels - y_hat)))
+
 
     # Batch Gradient Descent
     def batch_gradient_decent(self, alpha=1e-2, max_iter=1e3):
@@ -90,3 +91,55 @@ class LinearRegression:
                 break
             self.loss_history.append(loss)
         pass
+
+    # newton method
+    def newton_general(self, alpha=1e-1, max_iter=1e2):
+        for i in range(int(max_iter)):
+            g = self.first_derivative()
+            if np.linalg.norm(g) < self.tolerance:
+                break
+            G = self.second_derivative()
+            d = np.dot(np.linalg.inv(G), -g)
+            self.theta += alpha * d
+            loss = self.loss_function()
+            self.loss_history.append(loss)
+        pass
+
+    # first derivation of loss function
+    def first_derivative(self):
+        y_hat = self.hypothesise(self.features)
+        return -np.dot(self.features.T, self.labels - y_hat)
+
+    # second derivation of loss function
+    def second_derivative(self):
+        return np.dot(self.features.T, self.features)
+
+    # Armijo based newton method
+    def newton_armijo(self, max_iter=1e2, sigma=1.1, alpha=1e-1):
+        for i in range(int(max_iter)):
+            g = self.first_derivative()
+            if np.linalg.norm(g) < self.tolerance:
+                break
+            G = self.second_derivative()
+            d = np.dot(np.linalg.inv(G), -g)
+            m = self.get_min_m(sigma, alpha, g, d)
+            self.theta += pow(sigma, m) * d
+        pass
+
+    # get min m with Armijo Search method
+    def get_min_m(self, sigma, alpha, g, d):
+        m = 0
+        while True:
+            theta_new = self.theta + pow(sigma, m) * d
+            left = self.loss_function_2(theta_new)
+            print('g*d:', np.dot(g.T, d))
+            right = self.loss_function_2(self.theta) + alpha * pow(sigma, m) * np.dot(g.T, d)
+            if left <= right:
+                break
+            m += 1
+        pass
+
+    # loss_function with parameter of theta
+    def loss_function_2(self, theta):
+        y_hat = np.dot(self.features, theta)
+        return (0.5 / self.n_samples) * np.asscalar(np.dot((self.labels - y_hat).T, (self.labels - y_hat)))
