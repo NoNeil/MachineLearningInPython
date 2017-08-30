@@ -11,26 +11,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def show_result(X, y, lr):
-    X1 = np.linspace(0, 8, 1000)
-    features = np.ones((X1.shape[0], 2))
-    features[:, 0] = X1
-    y1 = lr.hypothesise(features)
-    plt.title("Draw line.")
-    plt.interactive(False)
-    plt.plot(X, y, 'bo')
-    plt.plot(X1, y1, 'r-')
-    plt.axis([0, 8, 0, 100])
-    plt.show(block=True)
+def show_result(lr, title):
+    fig, axarr = plt.subplots(2, 1)
+    fig.suptitle(title, fontsize=16)
 
+    # Draw line
+    num_samples = 1000
+    x = lr.features[:, :-1]
+    min_val_x, max_val_x = np.floor(np.amin(x)), np.ceil(np.amax(x))
+    x_continue = np.linspace(min_val_x, max_val_x, num_samples).reshape(num_samples, 1)
+    features = np.hstack((x_continue, np.ones((num_samples, 1))))
+    y_continue = lr.hypothesise(features)
+    axarr[0].set_title("Draw line.")
+    axarr[0].plot(lr.features[:, :-1], lr.labels, 'bo')
+    axarr[0].plot(x_continue, y_continue, 'r-')
+    axarr[0].axis([min_val_x, max_val_x, np.amin(y_continue), np.amax(y_continue)])
 
-def show_loss_history(loss_history):
-    num_iters = len(loss_history)
-    plt.title("History of the Cost")
+    # History of the Cost
+    num_iters = len(lr.loss_history)
+    axarr[1].set_title("History of the Cost")
+    axarr[1].plot(np.linspace(1, num_iters, num_iters), lr.loss_history, 'b-')
+    axarr[1].axis([0, num_iters, 0, np.max(lr.loss_history)])
+
     plt.interactive(False)
-    plt.plot(np.linspace(1, num_iters, num_iters), loss_history, 'b-')
-    plt.axis([-20, num_iters, 0, np.max(loss_history)])
     plt.show(block=True)
+    plt.show()
 
 
 # load data
@@ -39,33 +44,30 @@ data = data.as_matrix()
 X = data[:, 0: 1]
 y = data[:, -1]
 
+
 # invoke batch gradient decent
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.batch_gradient_decent(0.05, 1e5)
-print('theta of BGD: ', lr.theta.T)
-# show_result(X, y, lr)
-# show_loss_history(lr.loss_history)
+print('theta of BGD: ', lr.theta.T, ', num of iterations: ', len(lr.loss_history))
+show_result(lr, "Method: batch_gradient_decent")
 
 
 # invoke stochastic gradient decent
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.stochastic_gradient_descent(0.03, 1e3)
-print('theta of SGB: ', lr.theta.T)
-# show_result(X, y, lr)
-# show_loss_history(lr.loss_history)
+print('theta of SGB: ', lr.theta.T, ', num of iterations: ', len(lr.loss_history))
+show_result(lr, "Method: stochastic_gradient_descent")
 
-# invoke newton method
+
+# invoke general newton method
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.newton_general()
-print('theta of newton_general: ', lr.theta.T)
-show_result(X, y, lr)
-show_loss_history(lr.loss_history)
-print('num of iterations: ', len(lr.loss_history))
+print('theta of newton_general: ', lr.theta.T, ', num of iterations: ', len(lr.loss_history))
+show_result(lr, "Method: newton_general")
 
-# invoke newton method
+
+# invoke newton with Armijo search method
 lr = LinearRegression(X, y, tolerance=1e-4)
 lr.newton_armijo()
-print('theta of newton_armijo: ', lr.theta.T)
-show_result(X, y, lr)
-show_loss_history(lr.loss_history)
-print('num of iterations: ', len(lr.loss_history))
+print('theta of newton_armijo: ', lr.theta.T, ', num of iterations: ', len(lr.loss_history))
+show_result(lr, "Method: newton_armijo")

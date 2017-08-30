@@ -35,8 +35,7 @@ class LinearRegression:
         self.theta = np.zeros((self.n_features + 1, 1))
 
         # Add Intercept Data Point of 1 to each row
-        self.features = np.ones((self.n_samples, self.n_features + 1))
-        self.features[:, :self.n_features] = X
+        self.features = np.hstack((X, np.ones((self.n_samples, 1))))
 
         self.loss_history = []
         pass
