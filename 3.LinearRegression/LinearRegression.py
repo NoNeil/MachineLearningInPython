@@ -116,6 +116,7 @@ class LinearRegression:
     def second_derivative(self):
         return np.dot(self.features.T, self.features)
 
+    # ************************************************************
     # Armijo based newton method
     def newton_armijo(self, max_iter=1e2, sigma=0.5, alpha=0.1):
         for i in range(int(max_iter)):
@@ -150,3 +151,23 @@ class LinearRegression:
     def loss_function_2(self, theta):
         y_hat = np.dot(self.features, theta)
         return (0.5 / self.n_samples) * np.asscalar(np.dot((self.labels - y_hat).T, (self.labels - y_hat)))
+    # ************************************************************
+
+    def fit_local_weight_lr(self, X, tau):
+        X = np.hstack((X, np.ones((X.shape[0], 1))))
+        theta = []
+        estimation = []
+
+        if tau <= 0:
+            print("tau should be greate than 0.")
+            return [], []
+
+        for x in X:
+            weight = np.exp((-(self.features - x) * (self.features - x)).sum(axis=1) / (2 * tau ** 2))
+            W = np.diag(weight)
+            x_W = np.dot(self.features.T, W)
+            A = np.dot(x_W, self.features)
+            b = np.dot(x_W, self.labels)
+            theta.append(np.linalg.lstsq(A, b)[0])
+            estimation.append(np.dot(x, theta[-1]))
+        return theta, estimation

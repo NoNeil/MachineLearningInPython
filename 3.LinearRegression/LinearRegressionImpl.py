@@ -71,3 +71,12 @@ lr = LinearRegression(X, y, tolerance=1e-4)
 lr.newton_armijo()
 print('theta of newton_armijo: ', lr.theta.T, ', num of iterations: ', len(lr.loss_history))
 show_result(lr, "Method: newton_armijo")
+
+# local weight linear regression
+taus = np.linspace(1, 0, 5, False)
+for tau in np.nditer(taus):
+    _, y_estimate = lr.fit_local_weight_lr(X, tau)
+    plt.title("local weight linear regression with tau=" + str(tau))
+    plt.plot(lr.features[:, :-1], lr.labels, 'bo')
+    plt.plot(X, y_estimate, 'r-')
+    plt.show()
