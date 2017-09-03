@@ -171,3 +171,38 @@ class LinearRegression:
             theta.append(np.linalg.lstsq(A, b)[0])
             estimation.append(np.dot(x, theta[-1]))
         return theta, estimation
+
+class LogisticRegression(LinearRegression):
+
+    def hypothesise(self, features):
+        return 1.0 / (1 + np.exp(-np.dot(features, self.theta)))
+
+    def predict(self, features):
+        return self.hypothesise(features) > 0.5
+
+
+if __name__ == '__main__':
+
+    import pandas as pd
+    from sklearn.model_selection import train_test_split
+
+    # load data
+    data = pd.read_csv("./apple_juice.dat", header=None, sep=r"\s+")
+    data = data.as_matrix()
+    X = data[:, 0: -1]
+    y = data[:, -1]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+    # create Logistic Regression model
+    lr = LogisticRegression(X_train, y_train, tolerance=1e-5)
+    lr.stochastic_gradient_descent(0.03, 1e3)
+    print('theta of SGD: {0}, num of iterations: {1}'.format(lr.theta.T, len(lr.loss_history)))
+
+    # predict
+    X_test_bias = np.hstack((X_test, np.ones((X_test.shape[0], 1))))
+    y_pred = lr.predict(X_test_bias)
+    print('Accuracy rate: {:d}/{:d} = {:.6f}'
+          .format(np.sum(y_pred.T == y_test),
+                  y_test.shape[0],
+                  np.sum(y_pred.T == y_test).astype('float') / y_test.shape[0]))
+    pass
