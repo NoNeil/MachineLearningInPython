@@ -79,33 +79,3 @@ x = np.linspace(-4, 4, 100).reshape(100, 1)
 plt.plot(x, -(w[0] + w[1]*x)/w[2], 'r-')
 plt.show()
 
-
-# Test 2
-df_x = pd.read_csv("./data/ex4x.dat", header=None, delim_whitespace=True)
-df_y = pd.read_csv("./data/ex4y.dat", delim_whitespace=True)
-df = pd.concat([df_x, df_y], axis=1)
-df.columns=['x1', 'x2','y']
-
-data = df.as_matrix()
-X = data[:-1, 0: -1]
-y = np.reshape(data[:-1, -1], [X.shape[0], 1])
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-
-add_intercept = True
-w, loss_history = fit_bgd(X_train, y_train, 1000, 1e-3, add_intercept=add_intercept)
-print('weights: ', w)
-y_pred = predict(w, X_test, add_intercept=add_intercept)
-print('Accuracy rate: {:d}/{:d} = {:.6f}'.format(np.sum(y_pred == y_test),
-                                                 y_test.shape[0],
-                                                 np.sum(y_pred == y_test).astype('float') / y_test.shape[0]))
-
-plt.figure(figsize=(12, 8))
-plt.scatter(X[:, 0],
-            X[:, 1],
-            c = y,
-            alpha = 1.0)
-
-x = np.linspace(0, 60, 100).reshape(100, 1)
-plt.plot(x, -(w[0] + w[1]*x)/w[2], 'r-')
-plt.show()
